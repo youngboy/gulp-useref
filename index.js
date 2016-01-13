@@ -182,7 +182,12 @@ module.exports = function (options) {
 
                     // If any external transforms were included, pipe all files to them first
                     transforms.forEach(function (fn) {
-                        src = src.pipe(fn(name));
+                        src = src.pipe(
+                            fn(name)
+                                .on('error', function () {
+                                  this.emit('end');
+                                })
+                        );
                     });
 
                     // Add assets to the stream
